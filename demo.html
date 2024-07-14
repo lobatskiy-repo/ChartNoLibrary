@@ -11,6 +11,8 @@
     <div id="chartContainer"></div>
     <table id="dataTable"></table>
     <script src="./js/math.js"></script>
+    <script src="./js/chart.js"></script>
+    <script src="./js/graphics.js"></script>
     <script>
       const N = 1000;
 
@@ -25,7 +27,8 @@
 
         const price =
           math.remap(3000, 300000, 9000, 900, km) +
-          math.lerp(-2000, 2000, Math.random())+(type === "sport" ? 5000 : 0);
+          math.lerp(-2000, 2000, Math.random()) +
+          (type === "sport" ? 5000 : 0);
 
         sample.push({
           id: i,
@@ -34,8 +37,17 @@
         });
       }
 
+      const options = {
+        size: 250,
+        axesLabels: ["Kilometers", "Price"],
+        styles: {
+          basic: "gray",
+          sport: "red",
+        },
+      };
 
-      
+      const chart = new Chart(chartContainer, sample, options);
+
       const header = dataTable.createTHead();
       const tr = header.insertRow();
       tr.insertCell().textContent = "ID";
