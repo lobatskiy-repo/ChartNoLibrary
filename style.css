@@ -1,0 +1,30 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: skyblue;
+  margin: 0;
+}
+
+table,
+td {
+  border: 2px solid wheat;
+  border-collapse: collapse;
+  padding: 5px;
+  text-align: center;
+}
+
+thead {
+  background-color: wheat;
+  font-weight: bold;
+}
+
+thead td {
+  border-color: gray;
+}
+
+
+#chartContainer{
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+}
