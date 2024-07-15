@@ -16,17 +16,81 @@ class Chart {
     this.ctx = this.canvas.getContext("2d");
 
     this.marging = options.size * 0.1;
-
     this.transparency = 0.5;
+
+    this.dataTrans = {
+      offest: [0, 0],
+      scale: 1,
+    };
+
+    this.dragInfo = {
+      start: [0, 0],
+      end: [0, 0],
+      offest: [0, 0],
+      dragging: false,
+    };
 
     this.pixelBounds = this.#getPixelBounds();
     this.dataBounds = this.#getDataBounds();
+    this.defaultDataBounds=this.#getDataBounds();
 
     this.#draw();
 
-     
+    this.#addEventListeners();
   }
 
+  #addEventListeners() {
+    const { canvas, dataTrans, dragInfo } = this;
+
+    canvas.onmousedown = (evn) => {
+      const dataLoc = this.#getMouse(evn, true);
+      dragInfo.start = dataLoc;
+      dragInfo.dragging = true;
+      console.log(dataLoc);
+    };
+    canvas.onmousemove = (evn) => {
+      if (dragInfo.dragging) {
+        const dataLoc = this.#getMouse(evn, true);
+        dragInfo.end = dataLoc;
+        dragInfo.offest = math.subtract(dragInfo.start, dragInfo.end);
+        const newOffset = math.add(dataTrans.offest, dragInfo.offest);
+
+        this.#updateDataBounds(newOffset);
+        this.#draw();
+      }
+    };
+
+    canvas.onmouseup = (evn) => {
+      dataTrans.offest = math.add(dataTrans.offest, dragInfo.offest);
+      dragInfo.dragging = false;
+    };
+  }
+
+  #updateDataBounds(offest) {
+    const { dataBounds, defaultDataBounds: def } = this;
+
+    dataBounds.left = def.left + offest[0];
+    dataBounds.right = def.right + offest[0];
+    dataBounds.top = def.top + offest[1];
+    dataBounds.bottom = def.bottom + offest[1];
+  }
+  #getMouse(evn, dataSpace = false) {
+    const rect = this.canvas.getBoundingClientRect();
+
+    const pixelLoc = [evn.clientX - rect.left, evn.clientY - rect.top];
+
+    if (dataSpace) {
+      const dataLoc = math.remapPoint(
+        this.pixelBounds,
+        this.defaultDataBounds,
+        pixelLoc
+      );
+
+      return dataLoc;
+    }
+
+    return pixelLoc;
+  }
 
   #getPixelBounds() {
     const { canvas, marging } = this;
@@ -128,9 +192,6 @@ class Chart {
     });
     ctx.restore();
 
-
-
-
     const dataMax = math.remapPoint(this.pixelBounds, this.dataBounds, [
       right,
       top,
@@ -154,9 +215,6 @@ class Chart {
       vAligin: "bottom",
     });
     ctx.restore();
-
-    
-
   }
 
   #drawSamples() {
