@@ -23,7 +23,10 @@ class Chart {
     this.dataBounds = this.#getDataBounds();
 
     this.#draw();
+
+     
   }
+
 
   #getPixelBounds() {
     const { canvas, marging } = this;
@@ -65,9 +68,95 @@ class Chart {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    this.#drawAxes();
+
     ctx.globalAlpha = this.transparency;
     this.#drawSamples();
     ctx.globalAlpha = 1;
+  }
+  #drawAxes() {
+    const { ctx, canvas, axesLabels, marging } = this;
+    const { left, right, top, bottom } = this.pixelBounds;
+
+    graphics.drawText(ctx, {
+      text: axesLabels[0],
+      loc: [canvas.width / 2, bottom + marging / 2],
+      size: marging * 0.6,
+    });
+
+    ctx.save();
+    ctx.translate(left - marging / 2, canvas.height / 2);
+    ctx.rotate(-Math.PI / 2);
+    graphics.drawText(ctx, {
+      text: axesLabels[1],
+      loc: [0, 0],
+      size: marging * 0.6,
+    });
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(left, bottom);
+    ctx.lineTo(right, bottom);
+    ctx.setLineDash([5, 4]);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "lightgray";
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const dataMin = math.remapPoint(this.pixelBounds, this.dataBounds, [
+      left,
+      bottom,
+    ]);
+
+    graphics.drawText(ctx, {
+      text: math.formatNumber(dataMin[0], 2),
+      loc: [left, bottom],
+      size: marging * 0.3,
+      align: "left",
+      vAligin: "top",
+    });
+    ctx.save();
+    ctx.translate(left, bottom);
+    ctx.rotate(-Math.PI / 2);
+    graphics.drawText(ctx, {
+      text: math.formatNumber(dataMin[1], 2),
+      loc: [0, 0],
+      size: marging * 0.3,
+      align: "left",
+      vAligin: "bottom",
+    });
+    ctx.restore();
+
+
+
+
+    const dataMax = math.remapPoint(this.pixelBounds, this.dataBounds, [
+      right,
+      top,
+    ]);
+
+    graphics.drawText(ctx, {
+      text: math.formatNumber(dataMax[0], 2),
+      loc: [right, bottom],
+      size: marging * 0.3,
+      align: "right",
+      vAligin: "top",
+    });
+    ctx.save();
+    ctx.translate(left, top);
+    ctx.rotate(-Math.PI / 2);
+    graphics.drawText(ctx, {
+      text: math.formatNumber(dataMax[1], 2),
+      loc: [0, 0],
+      size: marging * 0.3,
+      align: "right",
+      vAligin: "bottom",
+    });
+    ctx.restore();
+
+    
+
   }
 
   #drawSamples() {

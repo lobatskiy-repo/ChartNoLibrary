@@ -8,3 +8,22 @@ graphics.drawPoint = function (ctx, loc, color = "black", size = 8) {
 
   ctx.fill();
 };
+
+graphics.drawText = function (
+  ctx,
+  {
+    text,
+    loc,
+    align = "center",
+    vAligin = "middle",
+    size = 10,
+    color = "black",
+  }
+) {
+  ctx.textAlign = align;
+  ctx.textBaseline = vAligin;
+  ctx.font = `bold ${size}px Courier`;
+  ctx.fillStyle = color;
+
+  ctx.fillText(text, ...loc);
+};
