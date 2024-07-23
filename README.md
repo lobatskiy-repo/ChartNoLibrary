@@ -1,7 +1,6 @@
 
 # Project Name: Custom Graph with Pure JavaScript
 
-**DEMO** - https://lobatskiy-repo.github.io/ChartNoLibrary/
 
 ## Description
 
@@ -17,3 +16,6 @@ The main goal is to test and demonstrate the skills of working with the HTML5 Ca
 ## Objectives
 
 - To explore the events of manipulating the Canvas element and handling user events.
+
+## Demo
+Check out the live demo [here](https://lobatskiy-repo.github.io/ChartNoLibrary/).
