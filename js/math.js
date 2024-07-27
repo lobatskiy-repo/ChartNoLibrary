@@ -29,12 +29,12 @@ math.remapPoint = (oldBounds, newBounds, point) => {
 math.add = (p1, p2) => {
   return [p1[0] + p2[0], p1[1] + p2[1]];
 };
-math.subtract = (p, scaler) => {
-  return [p[0] * scaler, p[1] * scaler];
+math.subtract = (p, p2) => {
+  return [p[0] - p2[0], p[1] - p2[1]];
 };
 
-math.scale = (p, s) => {
-  return [p[0] * s, p[1] * s];
+math.scale = (p, scaler) => {
+  return [p[0] * scaler, p[1] * scaler];
 };
 
 math.formatNumber = (number, decimals = 0) => {
