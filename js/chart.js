@@ -32,7 +32,7 @@ class Chart {
 
     this.pixelBounds = this.#getPixelBounds();
     this.dataBounds = this.#getDataBounds();
-    this.defaultDataBounds=this.#getDataBounds();
+    this.defaultDataBounds = this.#getDataBounds();
 
     this.#draw();
 
@@ -55,7 +55,7 @@ class Chart {
         dragInfo.offest = math.subtract(dragInfo.start, dragInfo.end);
         const newOffset = math.add(dataTrans.offest, dragInfo.offest);
 
-        this.#updateDataBounds(newOffset);
+        this.#updateDataBounds(newOffset, dataTrans.scale);
         this.#draw();
       }
     };
@@ -64,15 +64,41 @@ class Chart {
       dataTrans.offest = math.add(dataTrans.offest, dragInfo.offest);
       dragInfo.dragging = false;
     };
+
+    canvas.onwheel = (evn) => {
+      const dir = Math.sign(evn.deltaY);
+
+      const step = 0.02;
+
+      dataTrans.scale += dir * step;
+
+      dataTrans.scale = Math.max(step, Math.min(2, dataTrans.scale));
+
+      this.#updateDataBounds(dataTrans.offest, dataTrans.scale);
+
+      this.#draw();
+
+      evn.preventDefault();
+    };
   }
 
-  #updateDataBounds(offest) {
+  #updateDataBounds(offest, scale) {
     const { dataBounds, defaultDataBounds: def } = this;
 
     dataBounds.left = def.left + offest[0];
     dataBounds.right = def.right + offest[0];
     dataBounds.top = def.top + offest[1];
     dataBounds.bottom = def.bottom + offest[1];
+
+    const center = [
+      (dataBounds.left + dataBounds.right) / 2,
+      (dataBounds.top + dataBounds.bottom) / 2,
+    ];
+
+    dataBounds.left = math.lerp(center[0], dataBounds.left, scale ** 2);
+    dataBounds.right = math.lerp(center[0], dataBounds.right, scale ** 2);
+    dataBounds.top = math.lerp(center[1], dataBounds.top, scale ** 2);
+    dataBounds.bottom = math.lerp(center[1], dataBounds.bottom, scale ** 2);
   }
   #getMouse(evn, dataSpace = false) {
     const rect = this.canvas.getBoundingClientRect();
